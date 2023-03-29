@@ -1,0 +1,18 @@
+/**Query to find scheduled concurrent request for a given time period**/
+SELECT distinct fcp.user_concurrent_program_name "Program Name",
+                fcr.request_id "Request Id",
+                to_char(fcr.request_date,'DD-MON-YY HH24:MI:SS') "Date Subitted",
+                to_char(fcr.REQUESTED_START_DATE,'DD-MON-RRRR HH24:MI:SS') "Requested Start Date",
+                fcr.phase_code "Phase",
+                fcr.status_code "Status", fcr.argument_text
+FROM apps.fnd_concurrent_programs_vl fcp,
+       apps.fnd_concurrent_requests fcr,
+       apps.fnd_lookup_values flv
+WHERE fcr.concurrent_program_id = fcp.concurrent_program_id
+   AND flv.lookup_code = fcr.status_code
+   AND flv.lookup_type = 'CP_STATUS_CODE'
+   AND flv.language = 'US'
+   AND fcr.phase_code='P'
+AND REQUESTED_START_DATE
+between to_date('10-MAR-20 12:30:00','DD-MON-RRRR HH24:MI:SS') and to_date('10-MAR-20 14:30:00','DD-MON-RRRR HH24:MI:SS')
+ ORDER BY 4 ASC;
